@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Todo Application</title>
+</head>
+
+<body>
+    <div class="center-column">
+        {% include 'navbar/navigation.html' %}
+    </div>
+    <div class="container ">
+        <div class="center-column">
+
+            <form method="POST" action="/">
+                {% csrf_token %} {{form.title}}
+                <input class="btn btn-info" type="submit" name="Create Task">
+            </form>
+
+
+            {% for i in tasks %}
+            <div class="todo-list">
+
+
+                <div class="item-row">
+                    <a class="btn btn-sm btn-info" href="{% url 'update_task' i.id %}" role="button">Update</a>
+                    <a class="btn btn-sm btn-danger" href="{% url 'delete' i.id %}" role="button">Delete</a> {% if i.complete == True %}
+                    <strike>{{ i }} </strike> {% else %}
+                    <span>{{ i }}</span> {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+</body>
+
+</html>
