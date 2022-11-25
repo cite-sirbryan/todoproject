@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from .models import *  #! this will access all the models
 from .forms import *
 import datetime
+from django.db.models.functions import ExtractDay
+from django.db.models import Count
+
+import plotly.express as px
 # Create your views here.
 
 def index(request):
@@ -50,5 +54,58 @@ def deleteTask(request, pk):
     
     context = {
         "tasks": tasks
+    }
+    return render (request, template, context)
+
+def searchTask(request):
+    form = TaskForm()
+    if request.method == 'POST':
+        search = request.POST['search']
+        tasks = Task.objects.filter(title__contains=search)
+        context = {
+            "tasks":tasks,
+			"back":"back",
+            "form":form
+		}
+        return render(request, 'main/index.html', context)
+    else:
+        return render(request, 'main/index.html', {})
+
+def chartTask(request):
+    template = 'main/chart.html'
+    result = Task.objects.filter(created__year = '2022', created__month = '11').\
+			annotate(day=ExtractDay('created'),\
+				).values('day')\
+					.annotate(TaskSum=Count('pk'))\
+						.order_by('day')
+    #! line chart
+    fig = px.line(
+        x=[str(i['day']) for i in result ],        #! [ 21,22,23,24,25]
+        y=[i['TaskSum'] for i in result],          #! [0,0,0,7,0]
+        title="Monthly Chart of To Do List",
+        labels={ 'x': 'Day in a month', 'y': 'Number of To Do items'},
+    )
+    fig.update_layout(title={
+            'font_size':22,
+            'xanchor':'center',
+            'x':0.5
+    })
+    #! bar chart
+    fig1 = px.bar(
+        x=[str(i['day']) for i in result ],        #! [ 21,22,23,24,25]
+        y=[i['TaskSum'] for i in result],          #! [0,0,0,7,0]
+        title="Monthly Chart of To Do List",
+        labels={ 'x': 'Day in a month', 'y': 'Number of To Do items'},
+    )
+    fig1.update_layout(title={
+            'font_size':22,
+            'xanchor':'center',
+            'x':0.5
+    })
+    chart = fig.to_html()
+    bar = fig1.to_html()
+    context = {
+        "chart":chart,
+        "bar":bar
     }
     return render (request, template, context)

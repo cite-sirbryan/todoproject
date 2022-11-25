@@ -6,9 +6,10 @@
             <a class="nav-link" href="#"> About Me </a>
             <a class="nav-link" href="#"> Add Items </a>
             <a class="nav-link" href="3"> View Item </a> -->
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+            <form class="d-flex" role="search" method="POST" action="search/">
+                {% csrf_token %} {% if back != "back" %}
+                <input name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button> {% endif %}
             </form>
         </div>
     </nav>
