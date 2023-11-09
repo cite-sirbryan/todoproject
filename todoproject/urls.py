@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+#main url is located at the project folder
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('tasks.urls'))
